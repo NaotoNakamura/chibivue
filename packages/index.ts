@@ -8,11 +8,10 @@ export type App = {
 
 export const createApp = (options: Options): App => {
   return {
-    mount: (selector) => {
-      const root = document.querySelector(selector);
-      if (root) {
-        root.innerHTML = options.render();
-      }
+    mount: (selector: string) => {
+      const container = document.querySelector(selector);
+      if (!container) return;
+      container.textContent = options.render();
     },
   };
 };
