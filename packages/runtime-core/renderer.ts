@@ -1,3 +1,5 @@
+import { VNode } from "./vnode";
+
 export type RootRenderFunction<HostElement = RendererElement> = (
   message: string,
   container: HostElement
@@ -5,6 +7,9 @@ export type RootRenderFunction<HostElement = RendererElement> = (
 
 export interface RendererOptions<HostNode = RendererNode> {
   setElementText(node: HostNode, text: string): void;
+  createElement(type: string): HostNode;
+  createText(text: string): HostNode;
+  insert(child: HostNode, parent: HostNode, anchor?: HostNode | null): void;
 }
 
 export interface RendererNode {
@@ -14,10 +19,27 @@ export interface RendererNode {
 export interface RendererElement extends RendererNode {}
 
 export function createRenderer(options: RendererOptions) {
-  const { setElementText: hostSetElementText } = options;
+  const {
+    createElement: hostCreateElement,
+    createText: hostCreateText,
+    insert: hostInsert,
+  } = options;
 
-  const render: RootRenderFunction = (message, container) => {
-    hostSetElementText(container, message);
+  function renderVNode(vnode: VNode | string) {
+    if (typeof vnode === "string") return hostCreateText(vnode);
+    const el = hostCreateElement(vnode.type);
+
+    for (let child of vnode.children) {
+      const childEl = renderVNode(child);
+      hostInsert(childEl, el);
+    }
+
+    return el;
+  }
+
+  const render: RootRenderFunction = (vnode, container) => {
+    const el = renderVNode(vnode);
+    hostInsert(el, container);
   };
 
   return { render };
