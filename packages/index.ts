@@ -38,7 +38,7 @@ export const nodeOps: RendererOptions<Node> = {
 };
 
 export const createApp = (options: Options): App => {
-  return {
+  const app: App = {
     mount(selector: string) {
       const container = document.querySelector(selector);
       if (!container) return;
@@ -46,4 +46,5 @@ export const createApp = (options: Options): App => {
       render(options.render(), container);
     },
   };
+  return app;
 };
