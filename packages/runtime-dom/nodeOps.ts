@@ -1,10 +1,4 @@
-export interface RendererNode {
-  [key: string]: any;
-}
-
-export interface RendererOptions<HostNode = RendererNode> {
-  setElementText(node: HostNode, text: string): void;
-}
+import { RendererOptions } from "../runtime-core";
 
 export const nodeOps: RendererOptions<Node> = {
   setElementText(node, text) {

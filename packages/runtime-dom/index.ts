@@ -1,18 +1,9 @@
-import { createRenderer, createAppAPI } from "../runtime-core";
+import {
+  CreateAppFunction,
+  createAppAPI,
+  createRenderer,
+} from "../runtime-core";
 import { nodeOps } from "./nodeOps";
-
-export interface App<HostElement = any> {
-  mount(rootContainer: HostElement | string): void;
-}
-
-export type ComponentOptions = {
-  render?: Function;
-};
-export type Component = ComponentOptions;
-
-export type CreateAppFunction<HostElement> = (
-  rootComponent: Component
-) => App<HostElement>;
 
 const { render } = createRenderer(nodeOps);
 

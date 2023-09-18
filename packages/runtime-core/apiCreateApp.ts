@@ -1,22 +1,9 @@
+import { Component } from "./component";
+import { RootRenderFunction } from "./renderer";
+
 export interface App<HostElement = any> {
   mount(rootContainer: HostElement | string): void;
 }
-
-export interface RendererNode {
-  [key: string]: any;
-}
-
-export interface RendererElement extends RendererNode {}
-
-export type RootRenderFunction<HostElement = RendererElement> = (
-  message: string,
-  container: HostElement
-) => void;
-
-export type ComponentOptions = {
-  render?: Function;
-};
-export type Component = ComponentOptions;
 
 export type CreateAppFunction<HostElement> = (
   rootComponent: Component
