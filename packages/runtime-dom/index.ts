@@ -6,9 +6,9 @@ import {
 import { nodeOps } from "./nodeOps";
 
 const { render } = createRenderer(nodeOps);
+const _createApp = createAppAPI(render);
 
 export const createApp = ((...args) => {
-  const _createApp = createAppAPI(render);
   const app = _createApp(...args);
   const { mount } = app;
   app.mount = (selector: string) => {
@@ -16,5 +16,6 @@ export const createApp = ((...args) => {
     if (!container) return;
     mount(container);
   };
+
   return app;
 }) as CreateAppFunction<Element>;
