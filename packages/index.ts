@@ -2,9 +2,9 @@ export type Options = {
   render: () => string;
 };
 
-export type App = {
-  mount: (selector: string) => void;
-};
+export interface App<HostElement = any> {
+  mount(rootContainer: HostElement | string): void;
+}
 
 export interface RendererNode {
   [key: string]: any;
@@ -21,6 +21,15 @@ export type RootRenderFunction<HostElement = RendererElement> = (
   container: HostElement
 ) => void;
 
+export type ComponentOptions = {
+  render?: Function;
+};
+export type Component = ComponentOptions;
+
+export type CreateAppFunction<HostElement> = (
+  rootComponent: Component
+) => App<HostElement>;
+
 export function createRenderer(options: RendererOptions) {
   const { setElementText: hostSetElementText } = options;
 
@@ -31,6 +40,21 @@ export function createRenderer(options: RendererOptions) {
   return { render };
 }
 
+export function createAppAPI<HostElement>(
+  render: RootRenderFunction<HostElement>
+): CreateAppFunction<HostElement> {
+  return function createApp(rootComponent) {
+    const app: App = {
+      mount(rootContainer: HostElement) {
+        const message = rootComponent.render!();
+        render(message, rootContainer);
+      },
+    };
+
+    return app;
+  };
+}
+
 export const nodeOps: RendererOptions<Node> = {
   setElementText(node, text) {
     node.textContent = text;
@@ -39,13 +63,14 @@ export const nodeOps: RendererOptions<Node> = {
 
 const { render } = createRenderer(nodeOps);
 
-export const createApp = (options: Options): App => {
-  const app: App = {
-    mount(selector: string) {
-      const container = document.querySelector(selector);
-      if (!container) return;
-      render(options.render(), container);
-    },
+export const createApp = ((...args) => {
+  const _createApp = createAppAPI(render);
+  const app = _createApp(...args);
+  const { mount } = app;
+  app.mount = (selector: string) => {
+    const container = document.querySelector(selector);
+    if (!container) return;
+    mount(container);
   };
   return app;
-};
+}) as CreateAppFunction<Element>;
