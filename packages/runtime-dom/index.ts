@@ -4,6 +4,7 @@ import {
   createRenderer,
 } from "../runtime-core";
 import { nodeOps } from "./nodeOps";
+export * from "../runtime-core/h";
 
 const { render } = createRenderer(nodeOps);
 const _createApp = createAppAPI(render);
