@@ -1,15 +1,8 @@
 import { createRenderer, createAppAPI } from "../runtime-core";
+import { nodeOps } from "./nodeOps";
 
 export interface App<HostElement = any> {
   mount(rootContainer: HostElement | string): void;
-}
-
-export interface RendererNode {
-  [key: string]: any;
-}
-
-export interface RendererOptions<HostNode = RendererNode> {
-  setElementText(node: HostNode, text: string): void;
 }
 
 export type ComponentOptions = {
@@ -20,12 +13,6 @@ export type Component = ComponentOptions;
 export type CreateAppFunction<HostElement> = (
   rootComponent: Component
 ) => App<HostElement>;
-
-export const nodeOps: RendererOptions<Node> = {
-  setElementText(node, text) {
-    node.textContent = text;
-  },
-};
 
 const { render } = createRenderer(nodeOps);
 
