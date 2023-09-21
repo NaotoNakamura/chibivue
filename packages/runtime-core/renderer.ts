@@ -5,11 +5,15 @@ export type RootRenderFunction<HostElement = RendererElement> = (
   container: HostElement
 ) => void;
 
-export interface RendererOptions<HostNode = RendererNode> {
+export interface RendererOptions<
+  HostNode = RendererNode,
+  HostElement = RendererElement
+> {
   setElementText(node: HostNode, text: string): void;
   createElement(type: string): HostNode;
   createText(text: string): HostNode;
   insert(child: HostNode, parent: HostNode, anchor?: HostNode | null): void;
+  patchProp(el: HostElement, key: string, value: any): void;
 }
 
 export interface RendererNode {
@@ -20,6 +24,7 @@ export interface RendererElement extends RendererNode {}
 
 export function createRenderer(options: RendererOptions) {
   const {
+    patchProp: hostPatchProp,
     createElement: hostCreateElement,
     createText: hostCreateText,
     insert: hostInsert,
@@ -34,6 +39,11 @@ export function createRenderer(options: RendererOptions) {
       hostInsert(childEl, el);
     }
 
+    // vnode.props = { onClick() { alert("Hello world!") } }
+    // Object.entries(vnode.props) = [['onClick', ƒ]]
+    Object.entries(vnode.props).forEach(([key, value]) => {
+      hostPatchProp(el, key, value);
+    });
     return el;
   }
 
