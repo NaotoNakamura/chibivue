@@ -1,5 +1,6 @@
 import { Component } from "./component";
 import { RootRenderFunction } from "./renderer";
+import { ReactiveEffect } from "../reactivity";
 
 export interface App<HostElement = any> {
   mount(rootContainer: HostElement | string): void;
@@ -21,7 +22,8 @@ export function createAppAPI<HostElement>(
           render(vnode, rootContainer);
         };
 
-        updateComponent();
+        const effect = new ReactiveEffect(updateComponent);
+        effect.run();
       },
     };
 
